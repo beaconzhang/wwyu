@@ -14,29 +14,25 @@ events {
     worker_connections  1024;
 }
 
-rtmp {
-	server {
-    	#监听的端口
-    	listen 1935;
-    	# RTMP 直播流配置
-   		application rtmplive {
-        	live on;
-       		#为 rtmp 引擎设置最大连接数。默认为 off
-        	max_connections 1024;
-    	}
-    	# HLS 直播流配置
-    	application hls{
-        	live on;
-        	hls on;
-      		hls_path /home/yuzhengtian/project/hqmovie/hls;  #这里的路径切片需要保存的路径
-        	hls_fragment 1s;
-    	}
-
-		application  vod {
-                play /home/yuzhengtian/project/hqmovie/html/jwplayer/;  #点播文件存储目录
-        }
-	}
-}
+#rtmp {
+#	server {
+#    	#监听的端口
+#    	listen 1935;
+#    	# RTMP 直播流配置
+#   		application rtmplive {
+#        	live on;
+#       		#为 rtmp 引擎设置最大连接数。默认为 off
+#        	max_connections 1024;
+#    	}
+#    	# HLS 直播流配置
+#    	application hls{
+#        	live on;
+#        	hls on;
+#      		hls_path /home/yuzhengtian/project/hqmovie/hls;  #这里的路径切片需要保存的路径
+#        	hls_fragment 1s;
+#    	}
+#	}
+#}
 
 http {
 	client_max_body_size 500M;
@@ -56,33 +52,25 @@ http {
     keepalive_timeout  65;
 
     #gzip  on;
-	server{
-		listen 8080;
-		root /home/yuzhengtian/project/hqmovie/;
-		location /hls {
-    		# Serve HLS fragments
-   	 		types {
-       			application/vnd.apple.mpegurl m3u8;
-        		video/mp2t ts;
-    		}
-    		#add_header Cache-Controll no-cache;
-    		expires -1;
-		}
-		#rtmp 在rtmp://127.0.0.1:1935/rtmplive/home
-		location / {
-			index html/vedio.html;
-			header_filter_by_lua 'ngx.header.Server = "192.168.1.18"';  	
-		}
-		location /stat {
-           rtmp_stat all;
-           rtmp_stat_stylesheet stat.xsl;
-       	}
-		location /stat.xsl {
-           root /home/yuzhengtian/project/openresty/nginx-rtmp-module; #在nginx-rtmp-module源码根目录
-       }
+	#server{
+	#	listen 8080;
+	#	root /home/yuzhengtian/project/hqmovie/;
+	#	location /hls {
+    #		# Serve HLS fragments
+   	# 		types {
+    #   			application/vnd.apple.mpegurl m3u8;
+    #    		video/mp2t ts;
+    #		}
+    #		#add_header Cache-Controll no-cache;
+    #		expires -1;
+	#	}
+	#	#rtmp 在rtmp://127.0.0.1:1935/rtmplive/home
+	#	location / {
+	#		index html/vedio.html;
+	#		header_filter_by_lua 'ngx.header.Server = "192.168.1.18"';  	
+	#	}
 
-
-	}
+	#}
 
     server {
         listen       9090;
@@ -96,9 +84,8 @@ http {
         #
         error_page   500 502 503 504  /50x.html;
 		location / {
-			root /home/yuzhengtian/project/hqmovie/html/sewise-player/;
-			index demos/live_streamurl_rtmp.html;
-			header_filter_by_lua 'ngx.header.Server = "191.168.1.18"';  	
+			index html/index.html;
+			header_filter_by_lua 'ngx.header.Server = "192.168.1.18"';  	
 		}
 		location /home/ {
 			root /home/yuzhengtian/project/hqmovie/html/;
