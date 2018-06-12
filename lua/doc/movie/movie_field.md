@@ -16,5 +16,6 @@ show_date		string		首映时间
 duration		ushort		时间（分钟）
 alias			string		别名
 imdb			string		imdb 连接
+rate            string      评分时间
 ctm				datetime	创建时间
 mtm				datetime	最后一次修改时间

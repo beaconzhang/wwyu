@@ -142,6 +142,26 @@ def imdb(soup,parse_dict):
         return
     parse_dict["imdb"] = content["href"]
 
+def description(soup,parse_dict,url = None):
+    try:
+        contents = soup.find("span",property="v:summary").strings
+        content = ""
+        for s in contents:
+            if s:
+                content = content + "\n" + s.strip(" \t\n\r")
+    except Exception as e:
+        logging.exception(e)
+        content = ""
+    parse_dict["description"] = content.strip(" \t\n\r")
+
+def rate(soup,parse_dict):
+    try:
+        content = soup.find("strong",property="v:average").string
+    except Exception as e:
+        logging.exception(e)
+        content = None
+    parse_dict["rate"] = content.strip(" ")
+
 for tag in taglist:
     #print tag
     page_limit = 100
@@ -151,11 +171,13 @@ for tag in taglist:
     while _retry != 0:
         try:
             req = requests.get(url.format(tag=tag,page_limit=page_limit,page_start=page_start),cookies=cookie,timeout = timeout_tm)
+            print
+            u"page:{}".format(url.format(tag=tag,page_limit=page_limit,page_start=page_start)).encode("utf-8")
             page_start = page_start + page_limit
             if req.status_code != 200:
+                logging.error("error,get status:{}\tmessage:{}".format(req.status_code,req.content))
                 time.sleep(50)
                 cookie = {}
-                logging.error("error,get status:{}\tmessage:{}".format(req.status_code,req.content))
                 _retry = _retry - 1
                 continue
             #print req.headers["set_cookie"]
@@ -167,12 +189,15 @@ for tag in taglist:
                     try:
                         if rm.get(_lst["id"]):
                             print "id:{} have in redis".format(_lst["id"])
+                            #time.sleep(5)
                             break
-                        print "{}".format(sub_url.format(_lst["id"]))
-                        sub_req = requests.get(sub_url.format(_lst["id"]),timeout = timeout_tm,cookies=cookie)
+                        _sub_url = sub_url.format(_lst["id"])
+                        print "{}".format(_sub_url)
+                        sub_req = requests.get(_sub_url, timeout = timeout_tm,cookies=cookie)
                         if sub_req.status_code != 200:
                             print "error get id:{}".format(_lst["id"])
                         parse_dict = {}
+                        parse_dict["douban_url"] = _sub_url
                         content = sub_req.content
                         soup = BeautifulSoup(content,"html.parser")
                         # name year
@@ -188,6 +213,10 @@ for tag in taglist:
                         duration(soup,parse_dict)
                         alais(soup,parse_dict)
                         imdb(soup,parse_dict)
+                        description(soup,parse_dict,_sub_url)
+                        rate(soup,parse_dict)
+                        #print_dict(parse_dict)
+                        #os._exit(-1)
                         fp.write(json.dumps(parse_dict).encode("utf-8")+"\n")
                         fp.flush()
                         rm.set(_lst["id"],"1")
@@ -198,7 +227,7 @@ for tag in taglist:
                         retry = retry - 1
                         time.sleep(sleep_tm)
         except Exception as e:
-            time.sleep(50)
             logging.exception(e)
+            time.sleep(50)
             _retry = _retry - 1
     fp.close()
