@@ -43,7 +43,6 @@ class RedisManager():
         except Exception as e:
             logging.exception(e)
 
-    
     def set(self,id,value):
         try:
             if not self.get(self.prefix+id):

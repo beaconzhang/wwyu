@@ -1,6 +1,8 @@
 field			type		descript
 id				uint64_t	内部唯一id
 name			string		电影名字
+year            short       上映时间
+image_url       string      海报url
 description		string		电影描述
 scan_count		uint64_t	浏览数
 play_count		uint64_t	播放数
