@@ -148,13 +148,16 @@ for tag in taglist:
     page_limit = 100
     page_start = 0
     flag = False
-    try:
-        while not flag:
+    _retry = 30
+    while _retry != 0:
+        try:
             req = requests.get(url.format(tag=tag,page_limit=page_limit,page_start=page_start),cookies=cookie,timeout = timeout_tm)
+            page_start = page_start + page_limit
             if req.status_code != 200:
                 time.sleep(50)
                 cookie = {}
                 logging.error("error,get status:{}\tmessage:{}".format(req.status_code,req.content))
+                _retry = _retry - 1
                 continue
             #print req.headers["set_cookie"]
             lst = json.loads(req.content)["subjects"]
@@ -195,6 +198,8 @@ for tag in taglist:
                         logging.exception(e)
                         retry = retry - 1
                         time.sleep(sleep_tm)
-    except Exception as e:
-        logging.exception(e)
+        except Exception as e:
+            time.sleep(50)
+            logging.exception(e)
+            _retry = _retry - 1
     fp.close()
