@@ -1,5 +1,5 @@
-local c_lua = require("./common/c_lua")
 local util = require("./common/util")
+local global = require("./common/global")
 local _M = {}
 -- -------- ---- -------- -------- ---------- ----
 --|        |    |        |        |          |    |
@@ -7,10 +7,18 @@ local _M = {}
 --|        |    |        |        |          |    |
 -- -------- ---- -------- -------- ---------- ----
 --    8       4     8        6         12      4
+
+math.randomseed(tostring(os.time()):reverse():sub(1, 7))
+function string:split(sep)  
+    local sep, fields = sep or ":", {}  
+    local pattern = string.format("([^%s]+)", sep)  
+    self:gsub(pattern, function (c) fields[#fields + 1] = c end)  
+    return fields  
+end  
+
+
 function _M.get_ip_hex()
-	local t = io.popen('ip addr show |grep enp0s31f6 -A 1 |grep "inet "|awk  \'{print $2}\' |awk -F\'/\' \'{print $1}\'')
-	local ip = t:read("*all")
-	ip = c_lua.trim(ip,"\n")
+	local ip = g_lua_conf.ip
 	local arr = ip:split(".")
 	local ret = ""
 	for k,v in pairs(arr)
@@ -29,18 +37,18 @@ _M.prefix =  _M.get_ip_hex() .. _M.get_pid_hex()
 
 function _M.get_request_id()
 	local rid = ngx.var.request_id
-	return string.sub(rid,string.len(rid)-7,string.len(rid)) 
+	return string.upper(string.sub(rid,string.len(rid)-7,string.len(rid)))
 end
 
 function _M.get_connenct_id()
-	local connect_id = ngx.var.connect;
+	local connect_id = ngx.var.connection;
 	local request_id = ngx.var.connection_requests;
 	return string.format("%04X%02X",math.fmod(connect_id,65536),math.fmod(request_id,256))
 end
 
 function _M.get_time()
-	local tm = ngx.var.request_time
-	return string.format("%012X",math.fmod(tonumber(tm*1000,281474976710656)))
+	local tm = ngx.now()
+	return string.format("%012X",math.fmod(tonumber(tm*1000),281474976710656))
 end
 
 function _M.get_rnd()

@@ -1,3 +1,11 @@
 local uuid = require("./common/uuid")
 
-ngx.say(uuid.get_ip_hex())
+ngx.say(uuid.get_uuid())
+ngx.say(" _M.get_request_id:" .. uuid.get_request_id())
+ngx.say(" _M.get_request_id:" .. uuid.get_request_id())
+ngx.say(" reuqest_id:" .. ngx.var.request_id)
+ngx.say(" reuqest_id:" .. ngx.var.request_id)
+ngx.say(" time:" .. ngx.var.request_time)
+ngx.say(" connect_id:" .. ngx.var.connection)
+ngx.say(" request_id:" .. ngx.var.connection_requests)
+ngx.say(" ngx.now():" .. ngx.now())

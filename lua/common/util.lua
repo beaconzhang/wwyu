@@ -4,15 +4,7 @@ local json = require("cjson")
 local c_lua = require("./common/c_lua")
 local globle = require("./common/global")
 
-function string:split(sep)  
-    local sep, fields = sep or ":", {}  
-    local pattern = string.format("([^%s]+)", sep)  
-    self:gsub(pattern, function (c) fields[#fields + 1] = c end)  
-    return fields  
-end  
-
-
-function obj_string(obj)
+function _M.obj_string(obj)
     local lua = ""  
     local t = type(obj)  
     if t == "number" then  
@@ -33,9 +25,8 @@ function obj_string(obj)
 	return lua
 end
 
-function log_error(message,func,line)
-	ngx.log(ngx.ERR,g_lua_conf.log_delimit,func,g_lua_conf.log_delimit,
-	obi_string(message),g_lua_conf.log_delimit)
+function _M.log_error(message)
+	ngx.log(ngx.ERR,g_lua_conf.log_delimit,_M.obj_string(message),g_lua_conf.log_delimit)
 end
 	
 

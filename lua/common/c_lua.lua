@@ -1,5 +1,6 @@
 local ffi = require ("ffi")
-local cutil = ffi.load("cutil")
+local globle = require("./common/global")
+local cutil = ffi.load(g_lua_conf.workdir .. "/lua/lib/libutil.so")
 local _M ={}
 
 ffi.cdef[[
