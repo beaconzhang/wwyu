@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>录入数据</title>
+</head>
+<body>
+    <form name="form" id="movie_info" action="/test_multipart_form_data" method="post" enctype="multipart/form-data">  
+        <p>电影名字:<input type="text" name="name" required="required"></p>  
+		<p>导演:<input type="text" name="director" required="required"></p>
+		<p>编剧:<input type="text" name="scriptwriter" required="required"></p>
+		<p>演员:<input type="text" name="actor" required="required"></p>
+		<p>类型:<input type="text" name="type" required="required"></p>
+		<p>地区:<input type="text" name="area" required="required"></p>
+		<p>语言:<input type="text" name="language" required="required"></p>
+		<p>评分:<input type="text" name="duration" onkeyup="value=value.replace(/[^\d.]/g,'')"></p>
+		<p>别名:<input type="text" name="alias"></p>
+		<p>介绍:<textarea name="description" style="width:500px;height:50px;"></textarea></p>
+		<p>上映时间:<input type="month" name="date" required="required"></p>
+		<p>首映时间:<input type="text" name="show_date" required="required"></p>
+		<p>播放时间:<input type="text" name="duration" onkeyup="value=value.replace(/[^\d]/g,'')"> 分钟</p>
+		<p>imdb链接:<input type="url" name="imdb_url"></p>
+		<p>豆瓣链接:<input type="url" name="imdb_url"></p>
+		<p>海报连接:<input type="url" name="image_url" required="required"></p>
+        <p><input type="submit" value="submit"></p>  
+    </form>  
+</body>
+</html>

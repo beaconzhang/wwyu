@@ -28,6 +28,8 @@ end
 function _M.log_error(message)
 	ngx.log(ngx.ERR,g_lua_conf.log_delimit,_M.obj_string(message),g_lua_conf.log_delimit)
 end
+
+
 	
 
 return _M
